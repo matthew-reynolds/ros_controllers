@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(ackermann_steering_controller)
 
-# Default to C++14
-if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
-endif()
-
+# Load catkin and all dependencies required for this package
 find_package(catkin REQUIRED COMPONENTS
   controller_interface
   diff_drive_controller
@@ -18,11 +14,15 @@ find_package(catkin REQUIRED COMPONENTS
   urdf
 )
 
-find_package(Boost REQUIRED COMPONENTS system thread)
+# Include header-only Boost libraries (Boost.Accumulators, Boost.Bind, and Boost.Function)
+find_package(Boost REQUIRED)
 
+# Declare a catkin package
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
+  INCLUDE_DIRS
+    include
+  LIBRARIES
+    ${PROJECT_NAME}
   CATKIN_DEPENDS
     controller_interface
     diff_drive_controller
@@ -31,44 +31,52 @@ catkin_package(
     realtime_tools
     roscpp
     tf
-  DEPENDS Boost
+  DEPENDS
+    Boost
 )
 
-include_directories(
-  include
-  ${Boost_INCLUDE_DIRS}
-  ${catkin_INCLUDE_DIRS}
-)
+
+###########
+## Build ##
+###########
+
+# Specify header include paths
+include_directories(include ${catkin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_library(${PROJECT_NAME} src/ackermann_steering_controller.cpp src/odometry.cpp)
+add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 
-install(TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
 
-install(FILES ackermann_steering_controller_plugins.xml
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+#############
+## Testing ##
+#############
 
 if (CATKIN_ENABLE_TESTING)
-  find_package(catkin REQUIRED COMPONENTS
-    controller_manager
-    geometry_msgs
-    rostest
-    rosunit
-    std_msgs
-    std_srvs
-    gazebo_ros
-    xacro
-  )
-  include_directories(${catkin_INCLUDE_DIRS})
+  find_package(rostest REQUIRED)
 
-  add_executable(${PROJECT_NAME}_ackermann_steering_bot test/common/src/ackermann_steering_bot.cpp)
+  find_package(controller_manager REQUIRED)
+  find_package(controller_manager_msgs REQUIRED)
+  find_package(geometry_msgs REQUIRED)
+  find_package(std_msgs REQUIRED)
+  find_package(std_srvs REQUIRED)
+
+  include_directories(
+    ${controller_manager_INCLUDE_DIRS}
+    ${controller_manager_msgs_INCLUDE_DIRS}
+    ${geometry_msgs_INCLUDE_DIRS}
+    ${std_msgs_INCLUDE_DIRS}
+    ${std_srvs_INCLUDE_DIRS}
+  )
+
+  add_executable(${PROJECT_NAME}_ackermann_steering_bot EXCLUDE_FROM_ALL test/common/src/ackermann_steering_bot.cpp)
+  add_dependencies(${PROJECT_NAME}_ackermann_steering_bot ${catkin_EXPORTED_TARGETS})
+  target_link_libraries(${PROJECT_NAME}_ackermann_steering_bot
+    ${catkin_LIBRARIES}
+    ${controller_manager_LIBRARIES}
+  )
   add_dependencies(tests ${PROJECT_NAME}_ackermann_steering_bot)
 
-  target_link_libraries(${PROJECT_NAME}_ackermann_steering_bot ${catkin_LIBRARIES})
   add_rostest_gtest(${PROJECT_NAME}_test
     test/ackermann_steering_controller_test/ackermann_steering_controller.test
     test/ackermann_steering_controller_test/ackermann_steering_controller_test.cpp)
@@ -116,3 +124,20 @@ if (CATKIN_ENABLE_TESTING)
   add_rostest(test/ackermann_steering_controller_radius_param_fail_test/ackermann_steering_controller_radius_param_fail.test)
   add_rostest(test/ackermann_steering_controller_separation_param_test/ackermann_steering_controller_separation_param.test)
 endif()
+
+
+#############
+## Install ##
+#############
+
+# Install targets
+install(TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+# Install plugins
+install(FILES ackermann_steering_controller_plugins.xml
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
