@@ -5,15 +5,22 @@ See [ros_control](http://wiki.ros.org/ros_control) and [ros_controllers](http://
 
 ### Build Status
 
-Indigo | Kinetic | Lunar | Melodic | Noetic
------- | ------- | ----- | ------- | ------
-[![Build Status](https://travis-ci.org/ros-controls/ros_controllers.png?branch=indigo-devel)](https://travis-ci.org/ros-controls/ros_controllers) | [![Build Status](https://travis-ci.org/ros-controls/ros_controllers.png?branch=kinetic-devel)](https://travis-ci.org/ros-controls/ros_controllers) | [![Build Status](https://travis-ci.org/ros-controls/ros_controllers.png?branch=kinetic-devel)](https://travis-ci.org/ros-controls/ros_controllers) | [![Build Status](https://travis-ci.org/ros-controls/ros_controllers.png?branch=melodic-devel)](https://travis-ci.org/ros-controls/ros_controllers) | [![Build Status](https://travis-ci.org/ros-controls/ros_controllers.png?branch=noetic-devel)](https://travis-ci.org/ros-controls/ros_controllers)
+Kinetic | Melodic | Noetic
+------- | ------- | ------
+[![Build Status][kinetic_badge]][kinetic_link] | [![Build Status][melodic_badge]][melodic_link] | [![Build Status][noetic_badge]][noetic_link]
+
+[kinetic_badge]: https://github.com/ros-controls/ros_controllers/workflows/Test%20ros_controllers/badge.svg?branch=kinetic-devel&event=push
+[melodic_badge]: https://github.com/ros-controls/ros_controllers/workflows/Test%20ros_controllers/badge.svg?branch=melodic-devel&event=push
+[noetic_badge]:  https://github.com/ros-controls/ros_controllers/workflows/Test%20ros_controllers/badge.svg?branch=noetic-devel&event=push
+[kinetic_link]:  https://github.com/ros-controls/ros_controllers/actions?query=workflow%3A%22Test+ros_controllers%22+branch%3Akinetic-devel
+[melodic_link]:  https://github.com/ros-controls/ros_controllers/actions?query=workflow%3A%22Test+ros_controllers%22+branch%3Amelodic-devel
+[noetic_link]:   https://github.com/ros-controls/ros_controllers/actions?query=workflow%3A%22Test+ros_controllers%22+branch%3Anoetic-devel
 
 ### Branches for source-based installation
 
-ROS Indigo  | ROS Kinetic | ROS Lunar | ROS Melodic
---- | ------------- | ------------- | -------------
-indigo-devel  | kinetic-devel  | kinetic-devel | melodic-devel
+ROS Kinetic   | ROS Melodic   | ROS Noetic
+------------- | ------------- | -------------
+kinetic-devel | melodic-devel | noetic-devel
 
 ## Publication
 
