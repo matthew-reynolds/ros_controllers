@@ -34,10 +34,8 @@
 TEST_F(AckermannSteeringControllerTest, testLinearJerkLimits)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -65,10 +63,8 @@ TEST_F(AckermannSteeringControllerTest, testLinearJerkLimits)
 TEST_F(AckermannSteeringControllerTest, testLinearAccelerationLimits)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -96,10 +92,8 @@ TEST_F(AckermannSteeringControllerTest, testLinearAccelerationLimits)
 TEST_F(AckermannSteeringControllerTest, testLinearVelocityLimits)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -127,10 +121,8 @@ TEST_F(AckermannSteeringControllerTest, testLinearVelocityLimits)
 TEST_F(AckermannSteeringControllerTest, testAngularJerkLimits)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -141,7 +133,7 @@ TEST_F(AckermannSteeringControllerTest, testAngularJerkLimits)
   nav_msgs::Odometry old_odom = getLastOdom();
   // send a big command
   cmd_vel.angular.z = 10.0;
-  // send linear command too 
+  // send linear command too
   // because sending only angular command doesn't actuate wheels for steer drive mechanism
   cmd_vel.linear.x = 0.1;
   publish(cmd_vel);
@@ -162,10 +154,8 @@ TEST_F(AckermannSteeringControllerTest, testAngularJerkLimits)
 TEST_F(AckermannSteeringControllerTest, testAngularAccelerationLimits)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -176,7 +166,7 @@ TEST_F(AckermannSteeringControllerTest, testAngularAccelerationLimits)
   nav_msgs::Odometry old_odom = getLastOdom();
   // send a big command
   cmd_vel.angular.z = 10.0;
-  // send linear command too 
+  // send linear command too
   // because sending only angular command doesn't actuate wheels for steer drive mechanism
   cmd_vel.linear.x = 0.1;
   publish(cmd_vel);
@@ -197,10 +187,8 @@ TEST_F(AckermannSteeringControllerTest, testAngularAccelerationLimits)
 TEST_F(AckermannSteeringControllerTest, testAngularVelocityLimits)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -210,7 +198,7 @@ TEST_F(AckermannSteeringControllerTest, testAngularVelocityLimits)
   // get initial odom
   nav_msgs::Odometry old_odom = getLastOdom();
   cmd_vel.angular.z = 10.0;
-  // send linear command too 
+  // send linear command too
   // because sending only angular command doesn't actuate wheels for steer drive mechanism
   cmd_vel.linear.x = 0.1;
   publish(cmd_vel);

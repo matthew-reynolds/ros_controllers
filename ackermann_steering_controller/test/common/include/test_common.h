@@ -46,6 +46,9 @@
 
 #include <std_srvs/Empty.h>
 #include <controller_manager_msgs/ListControllers.h>
+#include <controller_manager_msgs/LoadController.h>
+#include <controller_manager_msgs/UnloadController.h>
+#include <controller_manager_msgs/SwitchController.h>
 
 // Floating-point value comparison threshold
 const double EPS = 0.01;
@@ -66,6 +69,9 @@ public:
   , start_srv(nh.serviceClient<std_srvs::Empty>("start"))
   , stop_srv(nh.serviceClient<std_srvs::Empty>("stop"))
   , list_ctrls_srv(nh.serviceClient<controller_manager_msgs::ListControllers>("/controller_manager/list_controllers"))
+  , load_ctrl_srv(nh.serviceClient<controller_manager_msgs::LoadController>("/controller_manager/load_controller"))
+  , unload_ctrl_srv(nh.serviceClient<controller_manager_msgs::UnloadController>("/controller_manager/unload_controller"))
+  , switch_ctrl_srv(nh.serviceClient<controller_manager_msgs::SwitchController>("/controller_manager/switch_controller"))
   , ctrl_name("ackermann_steering_bot_controller")
   {
   }
@@ -115,6 +121,44 @@ public:
   void start(){ std_srvs::Empty srv; start_srv.call(srv); }
   void stop(){ std_srvs::Empty srv; stop_srv.call(srv); }
 
+  bool reloadController()
+  {
+    controller_manager_msgs::SwitchController stop_controller;
+    stop_controller.request.stop_controllers.push_back(ctrl_name);
+    stop_controller.request.strictness = stop_controller.request.STRICT;
+    if(!switch_ctrl_srv.call(stop_controller)) return false;
+    if(!stop_controller.response.ok) return false;
+
+    controller_manager_msgs::UnloadController unload_controller;
+    unload_controller.request.name = ctrl_name;
+    if(!unload_ctrl_srv.call(unload_controller)) return false;
+    if(!unload_controller.response.ok) return false;
+
+    controller_manager_msgs::LoadController load_controller;
+    load_controller.request.name = ctrl_name;
+    if(!load_ctrl_srv.call(load_controller)) return false;
+    if(!load_controller.response.ok) return false;
+
+    controller_manager_msgs::SwitchController start_controller;
+    start_controller.request.start_controllers.push_back(ctrl_name);
+    start_controller.request.strictness = start_controller.request.STRICT;
+    if(!switch_ctrl_srv.call(start_controller)) return false;
+    if(!start_controller.response.ok) return false;
+
+    return true;
+  }
+
+  void waitForController()
+  {
+    while((!isControllerAlive() || !isLastOdomValid()) && ros::ok())
+    {
+      ROS_DEBUG_STREAM_THROTTLE(0.5, "Waiting for controller.");
+      ros::Duration(0.1).sleep();
+    }
+    if (!ros::ok())
+      FAIL() << "Something went wrong while executing test.";
+  }
+
 private:
   ros::NodeHandle nh;
   ros::Publisher cmd_pub;
@@ -125,6 +169,9 @@ private:
   ros::ServiceClient stop_srv;
 
   ros::ServiceClient list_ctrls_srv;
+  ros::ServiceClient load_ctrl_srv;
+  ros::ServiceClient unload_ctrl_srv;
+  ros::ServiceClient switch_ctrl_srv;
   std::string ctrl_name;
 
   std::mutex odom_mutex;
