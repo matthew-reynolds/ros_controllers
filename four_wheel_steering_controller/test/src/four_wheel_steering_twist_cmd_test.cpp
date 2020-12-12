@@ -7,6 +7,10 @@ TEST_F(FourWheelSteeringControllerTest, testForward)
   // wait for ROS
   waitForController();
 
+  // Stop and restart the controller to ensure the odom accumulators are reset
+  ASSERT_TRUE(reloadController());
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -55,6 +59,10 @@ TEST_F(FourWheelSteeringControllerTest, testForward)
 TEST_F(FourWheelSteeringControllerTest, testTurn)
 {
   // wait for ROS
+  waitForController();
+
+  // Stop and restart the controller to ensure the odom accumulators are reset
+  ASSERT_TRUE(reloadController());
   waitForController();
 
   // zero everything before test

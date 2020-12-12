@@ -150,10 +150,21 @@ public:
 
   void waitForController()
   {
-    while((!isControllerAlive() || !isLastOdomValid()) && ros::ok())
+    while(!isControllerAlive() && ros::ok())
     {
       ROS_DEBUG_STREAM_THROTTLE(0.5, "Waiting for controller.");
       ros::Duration(0.1).sleep();
+    }
+    if (!ros::ok())
+      FAIL() << "Something went wrong while executing test.";
+  }
+
+  void waitForOdomMsgs()
+  {
+    while(!isLastOdomValid() && ros::ok())
+    {
+      ROS_DEBUG_STREAM_THROTTLE(0.5, "Waiting for odom messages to be published.");
+      ros::Duration(0.01).sleep();
     }
     if (!ros::ok())
       FAIL() << "Something went wrong while executing test.";
