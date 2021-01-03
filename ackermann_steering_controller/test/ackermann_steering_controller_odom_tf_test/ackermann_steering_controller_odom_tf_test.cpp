@@ -35,10 +35,8 @@
 TEST_F(AckermannSteeringControllerTest, testNoOdomFrame)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // set up tf listener
   tf::TransformListener listener;
   ros::Duration(2.0).sleep();

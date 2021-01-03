@@ -36,6 +36,10 @@ TEST_F(DiffDriveControllerTest, testForward)
   // wait for ROS
   waitForController();
 
+  // Stop and restart the controller to ensure the odom accumulators are reset
+  ASSERT_TRUE(reloadController());
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
@@ -83,6 +87,10 @@ TEST_F(DiffDriveControllerTest, testForward)
 TEST_F(DiffDriveControllerTest, testTurn)
 {
   // wait for ROS
+  waitForController();
+
+  // Stop and restart the controller to ensure the odom accumulators are reset
+  ASSERT_TRUE(reloadController());
   waitForController();
 
   // zero everything before test

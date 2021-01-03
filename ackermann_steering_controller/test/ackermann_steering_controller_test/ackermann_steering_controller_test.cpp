@@ -35,16 +35,20 @@
 TEST_F(AckermannSteeringControllerTest, testForward)
 {
   // wait for ROS
-  while(!isControllerAlive() || !isLastOdomValid())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
   cmd_vel.angular.z = 0.0;
   publish(cmd_vel);
   ros::Duration(0.1).sleep();
+
+  // Stop and restart the controller to ensure the odom accumulators are reset
+  ASSERT_TRUE(reloadController());
+  waitForController();
+  waitForOdomMsgs();
+
   // get initial odom
   nav_msgs::Odometry old_odom = getLastOdom();
   // send a velocity command of 0.1 m/s
@@ -82,21 +86,24 @@ TEST_F(AckermannSteeringControllerTest, testForward)
 TEST_F(AckermannSteeringControllerTest, testTurn)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // zero everything before test
   geometry_msgs::Twist cmd_vel;
   cmd_vel.linear.x = 0.0;
   cmd_vel.angular.z = 0.0;
   publish(cmd_vel);
   ros::Duration(0.1).sleep();
+
+  // Stop and restart the controller to ensure the odom accumulators are reset
+  ASSERT_TRUE(reloadController());
+  waitForController();
+
   // get initial odom
   nav_msgs::Odometry old_odom = getLastOdom();
   // send a velocity command
   cmd_vel.angular.z = M_PI/10.0;
-  // send linear command too 
+  // send linear command too
   // because sending only angular command doesn't actuate wheels for steer drive mechanism
   cmd_vel.linear.x = 0.1;
   publish(cmd_vel);
@@ -133,10 +140,8 @@ TEST_F(AckermannSteeringControllerTest, testTurn)
 TEST_F(AckermannSteeringControllerTest, testOdomFrame)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // set up tf listener
   tf::TransformListener listener;
   ros::Duration(2.0).sleep();

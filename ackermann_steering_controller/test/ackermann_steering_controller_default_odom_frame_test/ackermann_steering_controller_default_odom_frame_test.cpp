@@ -35,10 +35,8 @@
 TEST_F(AckermannSteeringControllerTest, testOdomFrame)
 {
   // wait for ROS
-  while(!isControllerAlive())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+
   // set up tf listener
   tf::TransformListener listener;
   ros::Duration(2.0).sleep();
@@ -49,10 +47,8 @@ TEST_F(AckermannSteeringControllerTest, testOdomFrame)
 TEST_F(AckermannSteeringControllerTest, testOdomTopic)
 {
   // wait for ROS
-  while(!isControllerAlive() || !isLastOdomValid())
-  {
-    ros::Duration(0.1).sleep();
-  }
+  waitForController();
+  waitForOdomMsgs();
 
   // get an odom message
   nav_msgs::Odometry odom_msg = getLastOdom();
